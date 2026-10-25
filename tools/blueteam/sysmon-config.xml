@@ -1,0 +1,41 @@
+<!-- Sysmon configuration for FrogHacker blue-team detection.
+     Focus: lateral movement (ID 3), C2 (ID 3/22), exfil (ID 3),
+            persistence (ID 12/13), driver load (ID 6), remote thread (ID 8).
+
+     Install (as Administrator):
+       sysmon64.exe -accepteula -i tools/blueteam/sysmon-config.xml
+-->
+<Sysmon schemaversion="4.90">
+  <HashAlgorithms>*</HashAlgorithms>
+  <EventFiltering>
+
+    <!-- ProcessCreate (ID 1): log all, exclude nothing (detection-first) -->
+    <ProcessCreate onmatch="exclude">
+    </ProcessCreate>
+
+    <!-- NetworkConnect (ID 3): log all — lateral movement / C2 / exfil -->
+    <NetworkConnect onmatch="exclude">
+    </NetworkConnect>
+
+    <!-- DriverLoad (ID 6): log all — malicious driver / rootkit -->
+    <DriverLoad onmatch="exclude">
+    </DriverLoad>
+
+    <!-- CreateRemoteThread (ID 8): log all — process injection -->
+    <CreateRemoteThread onmatch="exclude">
+    </CreateRemoteThread>
+
+    <!-- RegistryEvent (ID 12/13/14): persistence keys only -->
+    <RegistryEvent onmatch="include">
+      <TargetObject condition="contains">\CurrentVersion\Run</TargetObject>
+      <TargetObject condition="contains">\CurrentVersion\RunOnce</TargetObject>
+      <TargetObject condition="contains">\Services\</TargetObject>
+      <TargetObject condition="contains">\Windows\CurrentVersion\Explorer</TargetObject>
+    </RegistryEvent>
+
+    <!-- DnsQuery (ID 22): log all — DNS tunneling C2 -->
+    <DnsQuery onmatch="exclude">
+    </DnsQuery>
+
+  </EventFiltering>
+</Sysmon>
