@@ -20,6 +20,18 @@
 
 > ⚠️ 本仓库只开源**业界通用的常规防御能力**。受专利保护的数学检测引擎（同调/Petri/因果/FCA）已剥离，见下方「专利保护与开源边界」。
 
+## 🗺️ 蛙客开源仓库导航
+
+蛙客平台按能力拆为五个独立仓库，本仓库是其中的**防御端（蓝队）**：
+
+| 仓库 | 定位 |
+|------|------|
+| **[froghacker-defense](https://github.com/wwyhji/froghacker-defense)** | 防御端（蓝队）：检测规则 / 蜜罐 / IDS / 防火墙 / 加固（本仓库） |
+| [froghacker-reveng](https://github.com/wwyhji/froghacker-reveng) | 逆向关联追踪引擎：APK 逆向找 key |
+| [froghacker-ant-swarm](https://github.com/wwyhji/froghacker-ant-swarm) | 蚁群协作调度底座：多 Agent 任务分配 |
+| [froghacker-antihallucination](https://github.com/wwyhji/froghacker-antihallucination) | 算法抗幻觉：确定性验证 + 事实断言裁决 |
+| [froghacker-audit](https://github.com/wwyhji/froghacker-audit) | 代码静态安全审计：regex + AST 污点 |
+
 ## ✨ 特性
 
 - **统一检测引擎** — 45 条检测规则，跨 7 个安全域，多特征事件匹配
@@ -113,7 +125,24 @@ froghacker-defense/
 ├── MANIFEST.md           文件清单与剥离说明
 ├── pyproject.toml        打包配置
 └── tools/
-    ├── blueteam/         蓝队核心模块（检测/蜜罐/IDS/防火墙/加固/巡逻…）
+    ├── blueteam/         蓝队核心模块
+    │   ├── detection_engine.py   统一检测引擎（45 规则 + 多特征匹配）
+    │   ├── honeypot.py / honeypot/   7 型蜜罐（部署/检测/分析/管理）
+    │   ├── ids.py                IDS 规则包（Suricata / Snort）
+    │   ├── firewall.py           防火墙（基线规则 + 封 IP）
+    │   ├── harden.py             系统加固
+    │   ├── patrol.py             周期巡逻（9 项检查）
+    │   ├── threat_hunt.py        威胁狩猎
+    │   ├── preemptive.py         先敌发现
+    │   ├── dynamic_defense.py    动态防御（四级威胁 + 封 IP）
+    │   ├── crash_defense.py      崩溃守护
+    │   ├── event_source.py       事件源（EVTX 拉取）
+    │   ├── realtime_source.py    实时事件订阅
+    │   ├── log_analyzer.py       日志分析
+    │   ├── dump_analyzer.py      dump 分析
+    │   ├── responder.py          处置闭环
+    │   ├── recon_warning.py      侦察预警
+    │   └── defense_benchmark.py  防御基准
     ├── core/             logger + discovery（轻依赖）
     ├── ad_attack/defense/    9 条 AD 域检测规则
     ├── ai_security/defense/  7 条 AI 安全检测规则
