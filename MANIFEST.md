@@ -9,7 +9,7 @@
 
 | 模块 | 能力 |
 |------|------|
-| `detection_engine.py` | 统一加载 45 条 `detect_*.py` 规则，多特征事件检测 |
+| `detection_engine.py` | 统一加载 50 条 `detect_*.py` 规则，多特征事件检测 |
 | `honeypot.py` + `honeypot/` | 蜜罐部署/检测/分析/管理（7 型） |
 | `ids.py` | IDS 规则生成与导出 |
 | `firewall.py` | 防火墙规则基线/封 IP |
@@ -26,7 +26,7 @@
 | `defense_benchmark.py` | 检测基准 |
 | `sysmon-config.xml` | Sysmon 配置 |
 
-### 检测规则（45 条，7 域）
+### 检测规则（50 条，8 域）
 
 | 域 | 数量 | 覆盖 |
 |----|------|------|
@@ -37,6 +37,7 @@
 | wireless | 6 | WiFi/BLE/RFID/GPS/... |
 | windows | 4 | LSASS/PowerShell/UAC/WMI |
 | blueteam | 3 | C2/Exfil/Lateral |
+| web | 5 | LFI/SQLi/Webshell/二次编码/敏感文件 |
 
 ### 轻依赖（`tools/core/`）
 

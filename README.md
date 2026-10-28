@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](./pyproject.toml)
-[![检测规则](https://img.shields.io/badge/检测规则-45-brightgreen.svg)]()
+[![检测规则](https://img.shields.io/badge/检测规则-50-brightgreen.svg)]()
 [![零依赖](https://img.shields.io/badge/依赖-纯标准库-important.svg)]()
 
 响应时代号召，开源蛙客网络安全分析自动化平台的**防御端（蓝队）**常规防御能力。
@@ -34,7 +34,7 @@
 
 ## ✨ 特性
 
-- **统一检测引擎** — 45 条检测规则，跨 7 个安全域，多特征事件匹配
+- **统一检测引擎** — 50 条检测规则，跨 8 个安全域，多特征事件匹配
 - **蜜罐** — 7 型蜜罐部署 / 检测 / 捕获分析
 - **IDS** — Suricata / Snort 规则包生成与导出
 - **防火墙** — 基线规则 + 封 IP
@@ -53,12 +53,12 @@
 先敌发现 → 蜜罐 → 监控 → 检测 → 响应 → 加固 → 报告
 preemptive  honeypot  event   detection  responder  harden  report
                         │
-                        ├─ 45 条 detect_*.py 规则（7 域）
+                        ├─ 50 条 detect_*.py 规则（8 域）
                         ├─ IDS 规则包
                         └─ 动态防御（四级威胁 + 封 IP）
 ```
 
-## 🛡️ 检测规则覆盖（45 条 / 7 域）
+## 🛡️ 检测规则覆盖（50 条 / 8 域）
 
 | 域 | 数量 | 覆盖 |
 |----|------|------|
@@ -69,6 +69,7 @@ preemptive  honeypot  event   detection  responder  harden  report
 | 无线 | 6 | WiFi / BLE / RFID / GPS / 蜂窝 / IoT |
 | Windows | 4 | LSASS Dump / PowerShell / UAC / WMI |
 | 通用蓝队 | 3 | C2 / 数据外泄 / 横向移动 |
+| Web | 5 | LFI / SQLi / Webshell / 二次编码 / 敏感文件 |
 
 ## 🚀 快速上手
 
@@ -84,7 +85,7 @@ cd froghacker-defense
 from tools.blueteam import DetectionEngine
 
 e = DetectionEngine()
-print('规则数:', e.rule_count())  # 45
+print('规则数:', e.rule_count())  # 50
 
 # 检测 DCSync 攻击（事件 4662 + DRSUAPI）
 alerts = e.scan({'event_code': '4662', 'raw': 'DRSUAPI replication'})
@@ -126,7 +127,7 @@ froghacker-defense/
 ├── pyproject.toml        打包配置
 └── tools/
     ├── blueteam/         蓝队核心模块
-    │   ├── detection_engine.py   统一检测引擎（45 规则 + 多特征匹配）
+    │   ├── detection_engine.py   统一检测引擎（50 规则 + 多特征匹配）
     │   ├── honeypot.py / honeypot/   7 型蜜罐（部署/检测/分析/管理）
     │   ├── ids.py                IDS 规则包（Suricata / Snort）
     │   ├── firewall.py           防火墙（基线规则 + 封 IP）
@@ -149,7 +150,8 @@ froghacker-defense/
     ├── ics/defense/          8 条工控检测规则
     ├── mobile/defense/       8 条移动检测规则
     ├── wireless/defense/     6 条无线检测规则
-    └── windows/defense/      4 条 Windows 检测规则
+    ├── windows/defense/      4 条 Windows 检测规则
+    └── web/defense/          5 条 Web 检测规则
 ```
 
 ## 📄 许可证
