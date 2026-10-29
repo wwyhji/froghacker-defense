@@ -2,21 +2,28 @@
 
 <div align="center">
 
-**蛙客 AI 防御端（开源版）** — 统一检测引擎 · 蜜罐 · IDS · 防火墙 · 加固 · 巡逻
+**蛙客 AI 防御端（开源版）** — 防御 AI 系统（Security for AI）· 先敌发现 · 统一检测引擎 · 蜜罐 · IDS
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](./pyproject.toml)
-[![检测规则](https://img.shields.io/badge/检测规则-50-brightgreen.svg)]()
+[![检测规则](https://img.shields.io/badge/检测规则-60-brightgreen.svg)]()
+[![OWASP](https://img.shields.io/badge/OWASP-LLM%20Top%2010%20%2B%20ASI-brightgreen.svg)]()
 [![零依赖](https://img.shields.io/badge/依赖-纯标准库-important.svg)]()
 
-响应时代号召，开源蛙客网络安全分析自动化平台的**防御端（蓝队）**常规防御能力。
+响应 2026 全球「AI 防御」需求，开源蛙客平台的**防御端（蓝队）**：既**防御 AI 系统本身**（Security for AI，对齐 OWASP），也提供**防御网络攻击**的常规基座（先敌防御 + human-on-the-loop）。
 
 </div>
 
 ## 这是什么
 
-蛙客（FrogHacker）是攻·防·取三端共生的安全分析自动化平台。本仓库开源的是其中的**防御端**：
-一套纯标准库、零第三方依赖的蓝队防御工具集，覆盖从「先敌发现」到「加固报告」的完整防御管线。
+蛙客（FrogHacker）是攻·防·取三端共生的安全分析自动化平台。本仓库开源的是其中的**防御端（蓝队）**。
+
+面对 2026 年「AI 让攻击者占优」的态势（每秒 5 万次恶意扫描、钓鱼较 2022 年 +4151%），Gartner 指出唯有**先敌防御（Preemptive Defense）**能扳回优势。本仓库沿两条腿落地：
+
+1. **Security for AI — 防御 AI 系统本身**：17 条 AI 检测规则，对齐 **OWASP LLM Top 10 (2025)** 与 **Agentic Security Initiative (ASI)**，覆盖 Prompt 注入 / MCP 工具滥用 / 记忆投毒 / 非人类身份 / 供应链 / 无界消耗等。
+2. **AI for Security — 防御网络攻击的常规基座**：先敌发现 → 蜜罐 → IDS → 检测 → 动态防御 → 加固，覆盖完整防御管线；坚持 **human-on-the-loop**，不追求全自主。
+
+纯标准库、零第三方依赖。
 
 > ⚠️ 本仓库只开源**业界通用的常规防御能力**。受专利保护的数学检测引擎（同调/Petri/因果/FCA）已剥离，见下方「专利保护与开源边界」。
 
@@ -34,7 +41,8 @@
 
 ## ✨ 特性
 
-- **统一检测引擎** — 50 条检测规则，跨 8 个安全域，多特征事件匹配
+- **统一检测引擎** — 60 条检测规则，跨 8 个安全域，多特征事件匹配
+- **Security for AI** — 17 条 AI 检测规则，对齐 OWASP LLM Top 10 (2025) + Agentic Security Initiative (ASI)
 - **蜜罐** — 7 型蜜罐部署 / 检测 / 捕获分析
 - **IDS** — Suricata / Snort 规则包生成与导出
 - **防火墙** — 基线规则 + 封 IP
@@ -53,23 +61,50 @@
 先敌发现 → 蜜罐 → 监控 → 检测 → 响应 → 加固 → 报告
 preemptive  honeypot  event   detection  responder  harden  report
                         │
-                        ├─ 50 条 detect_*.py 规则（8 域）
+                        ├─ 60 条 detect_*.py 规则（8 域）
                         ├─ IDS 规则包
                         └─ 动态防御（四级威胁 + 封 IP）
 ```
 
-## 🛡️ 检测规则覆盖（50 条 / 8 域）
+## 🛡️ 检测规则覆盖（60 条 / 8 域）
 
 | 域 | 数量 | 覆盖 |
 |----|------|------|
 | AD 域 | 9 | DCSync / Kerberos / NTLM / BloodHound / ADCS / Azure AD / GPO / LAPS |
-| AI 安全 | 7 | Prompt 注入 / Jailbreak / Agent 劫持 / 模型攻击 / 配置注入 |
+| AI 安全 | 17 | Prompt 注入 / Jailbreak / Agent 劫持 / 模型攻击 / MCP 工具滥用 / 记忆投毒 / 非人类身份 / 供应链 / 无界消耗 |
 | 工控 ICS | 8 | PLC / SCADA / Modbus / OPC-UA / IEC61850 / 固件 |
 | 移动 | 8 | APK / iOS / Frida / 恶意软件 / WebView |
 | 无线 | 6 | WiFi / BLE / RFID / GPS / 蜂窝 / IoT |
 | Windows | 4 | LSASS Dump / PowerShell / UAC / WMI |
 | 通用蓝队 | 3 | C2 / 数据外泄 / 横向移动 |
 | Web | 5 | LFI / SQLi / Webshell / 二次编码 / 敏感文件 |
+
+## 🤖 Security for AI — OWASP 对齐
+
+AI 安全检测规则对齐 **OWASP LLM Top 10 (2025)** 与 **Agentic Security Initiative (ASI)**：
+
+| OWASP LLM Top 10 (2025) | 对应规则 |
+|--------------------------|---------|
+| LLM01 Prompt Injection | prompt_injection / jailbreak / multimodal_attack |
+| LLM02 Sensitive Info Disclosure | sensitive_info_disclosure |
+| LLM03 Supply Chain | supply_chain / config_injection |
+| LLM04 Data & Model Poisoning | model_attack |
+| LLM05 Improper Output Handling | improper_output_handling |
+| LLM06 Excessive Agency | excessive_agency |
+| LLM07 System Prompt Leakage | system_prompt_leakage |
+| LLM08 Vector/Embedding | （未覆盖） |
+| LLM09 Misinformation | （未覆盖） |
+| LLM10 Unbounded Consumption | unbounded_consumption |
+
+| ASI (Agentic Security) | 对应规则 |
+|------------------------|---------|
+| ASI01 Agent Goal Hijack | agent_hijack |
+| ASI02 Tool Misuse | mcp_tool_misuse |
+| ASI03 Identity Abuse | nonhuman_identity_abuse |
+| ASI06 Memory Poisoning | agent_memory_poisoning |
+| ASI07 Insecure Inter-Agent Comm | inter_agent_comm |
+
+> ASI04 Supply Chain / ASI05 Unexpected Code Execution 分别由 LLM03 / LLM05 规则间接覆盖。辅助规则：red_team_framework（红队框架探测）。剩余缺口 LLM08 / LLM09 为低优先级。
 
 ## 🚀 快速上手
 
@@ -85,7 +120,7 @@ cd froghacker-defense
 from tools.blueteam import DetectionEngine
 
 e = DetectionEngine()
-print('规则数:', e.rule_count())  # 50
+print('规则数:', e.rule_count())  # 60
 
 # 检测 DCSync 攻击（事件 4662 + DRSUAPI）
 alerts = e.scan({'event_code': '4662', 'raw': 'DRSUAPI replication'})
@@ -127,7 +162,7 @@ froghacker-defense/
 ├── pyproject.toml        打包配置
 └── tools/
     ├── blueteam/         蓝队核心模块
-    │   ├── detection_engine.py   统一检测引擎（50 规则 + 多特征匹配）
+    │   ├── detection_engine.py   统一检测引擎（60 规则 + 多特征匹配）
     │   ├── honeypot.py / honeypot/   7 型蜜罐（部署/检测/分析/管理）
     │   ├── ids.py                IDS 规则包（Suricata / Snort）
     │   ├── firewall.py           防火墙（基线规则 + 封 IP）
@@ -146,7 +181,7 @@ froghacker-defense/
     │   └── defense_benchmark.py  防御基准
     ├── core/             logger + discovery（轻依赖）
     ├── ad_attack/defense/    9 条 AD 域检测规则
-    ├── ai_security/defense/  7 条 AI 安全检测规则
+    ├── ai_security/defense/  17 条 AI 安全检测规则（OWASP LLM Top 10 + ASI）
     ├── ics/defense/          8 条工控检测规则
     ├── mobile/defense/       8 条移动检测规则
     ├── wireless/defense/     6 条无线检测规则

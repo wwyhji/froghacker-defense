@@ -9,7 +9,7 @@
 
 | 模块 | 能力 |
 |------|------|
-| `detection_engine.py` | 统一加载 50 条 `detect_*.py` 规则，多特征事件检测 |
+| `detection_engine.py` | 统一加载 60 条 `detect_*.py` 规则，多特征事件检测 |
 | `honeypot.py` + `honeypot/` | 蜜罐部署/检测/分析/管理（7 型） |
 | `ids.py` | IDS 规则生成与导出 |
 | `firewall.py` | 防火墙规则基线/封 IP |
@@ -26,12 +26,12 @@
 | `defense_benchmark.py` | 检测基准 |
 | `sysmon-config.xml` | Sysmon 配置 |
 
-### 检测规则（50 条，8 域）
+### 检测规则（60 条，8 域）
 
 | 域 | 数量 | 覆盖 |
 |----|------|------|
 | ad_attack | 9 | ADCS/DCSync/Kerberos/NTLM/BloodHound/... |
-| ai_security | 7 | Prompt注入/Jailbreak/Agent劫持/模型攻击/... |
+| ai_security | 17 | Prompt注入/Jailbreak/Agent劫持/模型攻击/MCP工具滥用/记忆投毒/非人类身份/供应链/无界消耗/... |
 | ics | 8 | Modbus/DNP3/PLC/SCADA/... |
 | mobile | 8 | APK/iOS/Frida/恶意软件/... |
 | wireless | 6 | WiFi/BLE/RFID/GPS/... |
@@ -64,3 +64,12 @@
 - `tools/blueteam/__init__.py`：删除 `__weld_status__`、`run_self_heal()`、AlphaLoop/Flywheel 摄入段落，仅保留 `BlueTeamPipeline.run()` 防御主线（先敌发现→蜜罐→IDS→日志→狩猎→防火墙→加固）。
 - 各域 `__init__.py` 置为空文件（原文件 import 攻击侧模块，避免连带拖入）。
 - `tools/windows/` 原为命名空间包，此处补空 `__init__.py` 以稳定导入。
+
+### 2026-10-29 补强 Security for AI（对齐 OWASP）
+
+- `tools/ai_security/defense/` 新增 10 条检测规则，对齐 OWASP LLM Top 10 (2025) 与 Agentic Security Initiative (ASI)：
+  `sensitive_info_disclosure`(LLM02) / `supply_chain`(LLM03) / `improper_output_handling`(LLM05) /
+  `excessive_agency`(LLM06) / `system_prompt_leakage`(LLM07) / `unbounded_consumption`(LLM10) /
+  `mcp_tool_misuse`(ASI02) / `agent_memory_poisoning`(ASI06) / `nonhuman_identity_abuse`(ASI03) / `inter_agent_comm`(ASI07)。
+- 每条新增规则的 `SIGNATURE` 增加 `owasp` 字段用于对齐标注（`detection_engine` 不消费该字段，无副作用）。
+- AI 安全域规则数 7 → 17，总规则数 50 → 60。
