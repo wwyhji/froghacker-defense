@@ -46,6 +46,7 @@
 ### 轻依赖（`tools/core/`）
 
 - `logger.py` — 日志（纯标准库）
+- `tool_invoker.py` — 精简版外部工具调用器（纯 subprocess，剥离 OperationQueue/Hub 平台依赖）
 
 ## 二、已剥离（**不在**本仓库，受专利保护或属攻击侧）
 
