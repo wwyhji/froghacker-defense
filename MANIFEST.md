@@ -46,7 +46,6 @@
 ### 轻依赖（`tools/core/`）
 
 - `logger.py` — 日志（纯标准库）
-- `schemas/discovery.py` — Discovery dataclass（纯标准库）
 
 ## 二、已剥离（**不在**本仓库，受专利保护或属攻击侧）
 
