@@ -26,7 +26,6 @@
 | `defense_benchmark.py` | 检测基准 |
 | `fim.py` | 文件完整性监控（SHA-256 基线） |
 | `honeytoken.py` | 金丝雀诱饵（账号/凭证/文件/URL） |
-| `dns_security.py` | DNS 隧道/DGA 检测（香农熵） |
 | `yara_engine.py` | 轻量 YARA 特征匹配（22 规则） |
 | `block_backend.py` | 封 IP 后端抽象（可注入，dynamic_defense 依赖） |
 | `sysmon-config.xml` | Sysmon 配置 |
@@ -81,7 +80,7 @@
 
 ### 2026-11-13 补强常规防御手段
 
-- 新增 5 个纯标准库防御模块：`fim.py`（文件完整性）、`honeytoken.py`（金丝雀诱饵）、`dns_security.py`（DNS 隧道/DGA，香农熵——**已对照权利要求书确认不在专利04 权1-10 范围**）、`yara_engine.py`（轻量 YARA，22 规则）、`block_backend.py`（封 IP 后端抽象）。
+- 新增 4 个纯标准库防御模块：`fim.py`（文件完整性）、`honeytoken.py`（金丝雀诱饵）、`yara_engine.py`（轻量 YARA，22 规则）、`block_backend.py`（封 IP 后端抽象）。
 - 新增 2 条检测规则：`detect_recon_scan.py`（TA0043 网络侦察）、`detect_data_staging.py`（TA0009 数据收集）。总规则数 60 → 62。
 - `dynamic_defense.py` 接入 `block_backend` 可注入后端（默认 Windows 防火墙，行为不变）。
 - 剥离说明：`detect_*` 规则的 `keyword_hit` 依赖已内联为朴素子串匹配（与既有规则一致），`swallow_trap` 残留改为 `pass`。
