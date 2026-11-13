@@ -70,9 +70,12 @@ class DynamicDefense:
     """Adaptive defense engine."""
 
     def __init__(self, hub_url: str = "http://127.0.0.1:8765",
-                 state_file: str = ".blueteam_defense.json"):
+                 state_file: str = ".blueteam_defense.json",
+                 block_backend=None):
+        from tools.blueteam.block_backend import WindowsFirewallBackend
         self.hub_url = hub_url
         self.state_file = state_file
+        self.block_backend = block_backend or WindowsFirewallBackend()
         self.state = DefenseState()
         self.state.started_at = datetime.now().isoformat()
         self._threat_counter: dict[str, int] = defaultdict(int)
@@ -92,8 +95,7 @@ class DynamicDefense:
             }
             Path(self.state_file).write_text(json.dumps(data, indent=2))
         except Exception as _e:
-            from tools.swallow_trap import record
-            record(_e)
+            pass
 
     def _load_state(self):
         try:
@@ -102,8 +104,7 @@ class DynamicDefense:
             self.state.blocked_ips = data.get("blocked_ips", [])
             self.state.alert_count = data.get("alert_count", 0)
         except Exception as _e:
-            from tools.swallow_trap import record
-            record(_e)
+            pass
 
     # ── Threat Level Management ──
 
@@ -144,54 +145,31 @@ class DynamicDefense:
     # ── IP Blocking ──
 
     def block_ip(self, ip: str, reason: str = "Manual block") -> bool:
-        """Block an IP address via Windows Firewall."""
-        rule_name = f"FrogHacker_Block_{ip.replace('.', '_')}"
-
+        """Block an IP address via the configured backend."""
         # Check if already blocked
         for entry in self.state.blocked_ips:
             if entry["ip"] == ip:
                 return False
 
-        try:
-            # Create inbound block rule
-            result = subprocess.run(
-                ["netsh", "advfirewall", "firewall", "add", "rule",
-                 f"name={rule_name}", "dir=in", "action=block",
-                 f"remoteip={ip}", "enable=yes"],
-                capture_output=True, text=True, errors="replace", timeout=10,
-                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
-            )
-            if result.returncode == 0:
-                self.state.blocked_ips.append({
-                    "ip": ip,
-                    "reason": reason,
-                    "time": datetime.now().isoformat(),
-                    "rule_name": rule_name,
-                })
-                self._save_state()
-                self._log_event("block_ip", f"Blocked {ip}: {reason}")
-                return True
-        except Exception as e:
-            self._log_event("block_ip_error", f"Failed to block {ip}: {e}")
+        if self.block_backend.block(ip, reason):
+            self.state.blocked_ips.append({
+                "ip": ip,
+                "reason": reason,
+                "time": datetime.now().isoformat(),
+                "rule_name": f"FrogHacker_Block_{ip.replace('.', '_')}",
+            })
+            self._save_state()
+            self._log_event("block_ip", f"Blocked {ip}: {reason}")
+            return True
         return False
 
     def unblock_ip(self, ip: str) -> bool:
-        """Remove IP block."""
-        rule_name = f"FrogHacker_Block_{ip.replace('.', '_')}"
-        try:
-            subprocess.run(
-                ["netsh", "advfirewall", "firewall", "delete", "rule",
-                 f"name={rule_name}"],
-                capture_output=True, text=True, errors="replace", timeout=10,
-                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
-            )
+        """Remove IP block via the configured backend."""
+        if self.block_backend.unblock(ip):
             self.state.blocked_ips = [b for b in self.state.blocked_ips if b["ip"] != ip]
             self._save_state()
             return True
-        except Exception as _e:
-            from tools.swallow_trap import record
-            record(_e)
-            return False
+        return False
 
     # ── Honeypot Management ──
 
@@ -268,8 +246,7 @@ class DynamicDefense:
             if failures > 20:
                 self.escalate(f"Auth storm detected: {failures} recent failures")
         except Exception as _e:
-            from tools.swallow_trap import record
-            record(_e)
+            pass
 
     # ── Logging ──
 
@@ -306,8 +283,7 @@ class DynamicDefense:
                 from tools.swallow_trap import record
                 record(_e)
         except Exception as _e:
-            from tools.swallow_trap import record
-            record(_e)
+            pass
 
     # ── Status ──
 

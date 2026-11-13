@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](./pyproject.toml)
-[![检测规则](https://img.shields.io/badge/检测规则-60-brightgreen.svg)]()
+[![检测规则](https://img.shields.io/badge/检测规则-62-brightgreen.svg)]()
 [![OWASP](https://img.shields.io/badge/OWASP-LLM%20Top%2010%20%2B%20ASI-brightgreen.svg)]()
 [![零依赖](https://img.shields.io/badge/依赖-纯标准库-important.svg)]()
 
@@ -41,7 +41,7 @@
 
 ## ✨ 特性
 
-- **统一检测引擎** — 60 条检测规则，跨 8 个安全域，多特征事件匹配
+- **统一检测引擎** — 62 条检测规则，跨 8 个安全域，多特征事件匹配
 - **Security for AI** — 17 条 AI 检测规则，对齐 OWASP LLM Top 10 (2025) + Agentic Security Initiative (ASI)
 - **蜜罐** — 7 型蜜罐部署 / 检测 / 捕获分析
 - **IDS** — Suricata / Snort 规则包生成与导出
@@ -50,7 +50,11 @@
 - **周期巡逻** — 9 项安全检查
 - **威胁狩猎** — IOC 驱动的主动狩猎
 - **先敌发现** — 薄弱点预扫描
-- **动态防御** — 四级威胁自适应 + 自动封 IP
+- **动态防御** — 四级威胁自适应 + 自动封 IP（后端可注入）
+- **文件完整性** — FIM SHA-256 基线，检测篡改
+- **金丝雀** — Honeytoken 诱饵（账号/凭证/文件/URL）
+- **DNS 安全** — 隧道 / DGA / 恶意域名检测
+- **YARA 引擎** — 轻量恶意样本特征匹配（22 规则）
 - **崩溃守护** — 进程崩溃自动守护
 - **事件源** — EVTX 结构化拉取 + 实时订阅
 - **零依赖** — 纯 Python 标准库，无需 pip install
@@ -61,12 +65,12 @@
 先敌发现 → 蜜罐 → 监控 → 检测 → 响应 → 加固 → 报告
 preemptive  honeypot  event   detection  responder  harden  report
                         │
-                        ├─ 60 条 detect_*.py 规则（8 域）
+                        ├─ 62 条 detect_*.py 规则（8 域）
                         ├─ IDS 规则包
                         └─ 动态防御（四级威胁 + 封 IP）
 ```
 
-## 🛡️ 检测规则覆盖（60 条 / 8 域）
+## 🛡️ 检测规则覆盖（62 条 / 8 域）
 
 | 域 | 数量 | 覆盖 |
 |----|------|------|
@@ -76,7 +80,7 @@ preemptive  honeypot  event   detection  responder  harden  report
 | 移动 | 8 | APK / iOS / Frida / 恶意软件 / WebView |
 | 无线 | 6 | WiFi / BLE / RFID / GPS / 蜂窝 / IoT |
 | Windows | 4 | LSASS Dump / PowerShell / UAC / WMI |
-| 通用蓝队 | 3 | C2 / 数据外泄 / 横向移动 |
+| 通用蓝队 | 5 | C2 / 数据外泄 / 横向移动 / 网络侦察 / 数据收集 |
 | Web | 5 | LFI / SQLi / Webshell / 二次编码 / 敏感文件 |
 
 ## 🤖 Security for AI — OWASP 对齐
@@ -120,7 +124,7 @@ cd froghacker-defense
 from tools.blueteam import DetectionEngine
 
 e = DetectionEngine()
-print('规则数:', e.rule_count())  # 60
+print('规则数:', e.rule_count())  # 62
 
 # 检测 DCSync 攻击（事件 4662 + DRSUAPI）
 alerts = e.scan({'event_code': '4662', 'raw': 'DRSUAPI replication'})
